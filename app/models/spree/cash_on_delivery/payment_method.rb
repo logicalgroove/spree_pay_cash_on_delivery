@@ -9,28 +9,6 @@ module Spree
         false # we want to show the confirm step.
       end
 
-
-      def create_adjustment(payment)
-        adjustment = Spree::Adjustment.create(
-            amount: Spree::CashOnDelivery::Config.charge.to_f,
-            order: payment.order,
-            adjustable: payment.order,
-            source: self,
-            :mandatory => true,
-            :included => true,
-            label: "Cash On Delivery Fee"
-        )
-
-        payment.order.adjustments << adjustment
-
-        payment.update_attribute(:amount, payment.amount + Spree::CashOnDelivery::Config.charge.to_f)
-        payment.order.updater.update_adjustment_total
-        payment.order.updater.update_order_total
-        payment.order.persist_totals
-        # end
-      end
-
-
       def authorize(*args)
         ActiveMerchant::Billing::Response.new(true, "", {}, {})
       end
